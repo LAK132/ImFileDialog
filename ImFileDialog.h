@@ -25,9 +25,9 @@ namespace ifd {
 		FileDialog();
 		~FileDialog();
 
-		bool Save(const std::string& key, const std::string& title, const std::string& filter, const std::string& startingDir = "");
+		bool Save(const std::string& key, const std::string& title, const std::string& filter, const std::filesystem::path& startingDir = "");
 
-		bool Open(const std::string& key, const std::string& title, const std::string& filter, bool isMultiselect = false, const std::string& startingDir = "");
+		bool Open(const std::string& key, const std::string& title, const std::string& filter, bool isMultiselect = false, const std::filesystem::path& startingDir = "");
 
 		bool IsDone(const std::string& key);
 
@@ -37,9 +37,9 @@ namespace ifd {
 
 		void Close();
 
-		void RemoveFavorite(const std::string& path);
-		void AddFavorite(const std::string& path);
-		inline const std::vector<std::string>& GetFavorites() { return m_favorites; }
+		void RemoveFavorite(const std::filesystem::path& path);
+		void AddFavorite(const std::filesystem::path& path);
+		inline const std::vector<std::filesystem::path>& GetFavorites() { return m_favorites; }
 
 		inline void SetZoom(float z) { 
 			m_zoom = std::min<float>(25.0f, std::max<float>(1.0f, z)); 
@@ -52,21 +52,20 @@ namespace ifd {
 
 		class FileTreeNode {
 		public:
-#ifdef _WIN32
-			FileTreeNode(const std::wstring& path) {
-				Path = std::filesystem::path(path);
-				Read = false;
+			FileTreeNode(const std::filesystem::path& path, bool read = false) 
+			: Path(path),
+			  Read(read) {
 			}
-#endif
 
-			FileTreeNode(const std::string& path) {
-				Path = std::filesystem::u8path(path);
-				Read = false;
-			}
+			FileTreeNode() = default;
+			FileTreeNode(const FileTreeNode&) = default;
+			FileTreeNode(FileTreeNode&&) = default;
+			FileTreeNode& operator=(const FileTreeNode&) = default;
+			FileTreeNode& operator=(FileTreeNode&&) = default;
 
 			std::filesystem::path Path;
 			bool Read;
-			std::vector<FileTreeNode*> Children;
+			std::vector<FileTreeNode> Children;
 		};
 		class FileData {
 		public:
@@ -94,7 +93,7 @@ namespace ifd {
 		char m_pathBuffer[1024];
 		char m_newEntryBuffer[1024];
 		char m_searchBuffer[128];
-		std::vector<std::string> m_favorites;
+		std::vector<std::filesystem::path> m_favorites;
 		bool m_calledOpenPopup;
 		std::stack<std::filesystem::path> m_backHistory, m_forwardHistory;
 		float m_zoom;
@@ -104,7 +103,7 @@ namespace ifd {
 		void m_select(const std::filesystem::path& path, bool isCtrlDown = false);
 
 		std::vector<std::filesystem::path> m_result;
-		bool m_finalize(const std::string& filename = "");
+		bool m_finalize(const std::filesystem::path& filename = "");
 
 		std::string m_filter;
 		std::vector<std::vector<std::string>> m_filterExtensions;
@@ -124,8 +123,7 @@ namespace ifd {
 		void m_stopPreviewLoader();
 		void m_loadPreview();
 
-		std::vector<FileTreeNode*> m_treeCache;
-		void m_clearTree(FileTreeNode* node);
+		std::vector<FileTreeNode> m_treeCache;
 		void m_renderTree(FileTreeNode* node);
 
 		unsigned int m_sortColumn;
