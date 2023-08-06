@@ -60,9 +60,20 @@ namespace ifd {
 #endif
 
 			FileTreeNode(const std::string& path, bool read = false) {
+#if __cplusplus >= 202002L
+				Path = std::filesystem::path((char8_t*)path.c_str());
+#else
 				Path = std::filesystem::u8path(path);
+#endif
 				Read = read;
 			}
+
+#if __cplusplus >= 202002L
+			FileTreeNode(const std::u8string& path, bool read = false) {
+				Path = std::filesystem::path(path);
+				Read = read;
+			}
+#endif
 
 			FileTreeNode() = default;
 			FileTreeNode(const FileTreeNode&) = default;
