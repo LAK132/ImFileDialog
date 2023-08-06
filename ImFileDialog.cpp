@@ -13,6 +13,15 @@
 #include "stb_image.h"
 
 #ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef UNICODE
+#define UNICODE
+#endif
 #include <windows.h>
 #include <shellapi.h>
 #include <lmcons.h>
