@@ -53,20 +53,26 @@ namespace ifd {
 		class FileTreeNode {
 		public:
 #ifdef _WIN32
-			FileTreeNode(const std::wstring& path) {
+			FileTreeNode(const std::wstring& path, bool read = false) {
 				Path = std::filesystem::path(path);
-				Read = false;
+				Read = read;
 			}
 #endif
 
-			FileTreeNode(const std::string& path) {
+			FileTreeNode(const std::string& path, bool read = false) {
 				Path = std::filesystem::u8path(path);
-				Read = false;
+				Read = read;
 			}
+
+			FileTreeNode() = default;
+			FileTreeNode(const FileTreeNode&) = default;
+			FileTreeNode(FileTreeNode&&) = default;
+			FileTreeNode& operator=(const FileTreeNode&) = default;
+			FileTreeNode& operator=(FileTreeNode&&) = default;
 
 			std::filesystem::path Path;
 			bool Read;
-			std::vector<FileTreeNode*> Children;
+			std::vector<FileTreeNode> Children;
 		};
 		class FileData {
 		public:
@@ -124,8 +130,7 @@ namespace ifd {
 		void m_stopPreviewLoader();
 		void m_loadPreview();
 
-		std::vector<FileTreeNode*> m_treeCache;
-		void m_clearTree(FileTreeNode* node);
+		std::vector<FileTreeNode> m_treeCache;
 		void m_renderTree(FileTreeNode* node);
 
 		unsigned int m_sortColumn;
