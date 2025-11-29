@@ -14,6 +14,8 @@
 #define IFD_DIALOG_SAVE			2
 
 namespace ifd {
+	using TextureID = unsigned long long;
+
 	class FileDialog {
 	public:
 		static inline FileDialog& Instance()
@@ -47,8 +49,8 @@ namespace ifd {
 		}
 		inline float GetZoom() { return m_zoom; }
 
-		std::function<void*(uint8_t*, int, int, char)> CreateTexture; // char -> fmt -> { 0 = BGRA, 1 = RGBA }
-		std::function<void(void*)> DeleteTexture;
+		std::function<TextureID(uint8_t*, int, int, char)> CreateTexture; // char -> fmt -> { 0 = BGRA, 1 = RGBA }
+		std::function<void(TextureID)> DeleteTexture;
 
 		class FileTreeNode {
 		public:
@@ -77,7 +79,7 @@ namespace ifd {
 			time_t DateModified;
 
 			bool HasIconPreview;
-			void* IconPreview;
+			TextureID IconPreview;
 			uint8_t* IconPreviewData;
 			int IconPreviewWidth, IconPreviewHeight;
 		};
@@ -112,8 +114,8 @@ namespace ifd {
 
 		std::vector<int> m_iconIndices;
 		std::vector<std::string> m_iconFilepaths; // m_iconIndices[x] <-> m_iconFilepaths[x]
-		std::unordered_map<std::string, void*> m_icons;
-		void* m_getIcon(const std::filesystem::path& path);
+		std::unordered_map<std::string, TextureID> m_icons;
+		TextureID m_getIcon(const std::filesystem::path& path);
 		void m_clearIcons();
 		void m_refreshIconPreview();
 		void m_clearIconPreview();
