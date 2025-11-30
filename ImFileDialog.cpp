@@ -33,8 +33,8 @@
 #include <pwd.h>
 #endif
 
-#define ICON_SIZE ImGui::GetFont()->FontSize + 3
-#define GUI_ELEMENT_SIZE std::max(GImGui->FontSize + 10.f, 24.f)
+#define ICON_SIZE ImGui::GetFont()->LegacySize + 3
+#define GUI_ELEMENT_SIZE std::max(ImGui::GetFont()->LegacySize + 10.f, 24.f)
 #define DEFAULT_ICON_SIZE 32
 #define PI 3.141592f
 
